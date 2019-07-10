@@ -47,13 +47,13 @@
 
 ### TCP握手机制
 
-![](http://prvyof0n9.bkt.clouddn.com/net3.png)
+![](http://img.shaking.top/net3.png)
 
 ### 用户数据报协议UDP
 
 ​	用户数据报协议UDP是Internet传输层协议。提供无连接、不可靠、数据报尽力传输服务。
 
-![](http://prvyof0n9.bkt.clouddn.com/net4.png)
+![](http://img.shaking.top/net4.png)
 
 ​	使用UDP是应该关注以下几点：
 
@@ -98,7 +98,7 @@
 - `position位置`：写入模式时代表写数据的位置。读取模式时代表读取数据的位置。
 - `limit限制`：写入模式，限制等于buffer的容量。读取模式下，limit等于写入的数据量。
 
-![](http://prvyof0n9.bkt.clouddn.com/net5.png)
+![](http://img.shaking.top/net5.png)
 
 ### ByteBuffer内存类型
 
@@ -128,7 +128,7 @@ ByteBuffer directByteBuffer = ByteBuffer.allocateDirect(noBytes);
 
 ​	BIO应用和NIO应用的区别：
 
-![](http://prvyof0n9.bkt.clouddn.com/net6.png)
+![](http://img.shaking.top/net6.png)
 
 ### SocketChannel
 
@@ -215,13 +215,13 @@ Selector selector = Selector.open();
 
 ## NIO对比BIO
 
-![net7](E:\博客图片\网络编程\net7.png)
+![net7](http://img.shaking.top/net7.png)
 
 ## NIO与多线程结合的改进方案
 
 ​	Doug Lea的著名文章《Scalable IO in Java》
 
-![net8](E:\博客图片\网络编程\net8.png)
+![net8](http://img.shaking.top/net8.png)
 
 ## Netty简介
 
@@ -234,7 +234,7 @@ Selector selector = Selector.open();
 3. ChannelPipeline职责链设计模式：事件处理机制
 4. 内存管理：增强的ByteBuffer缓冲区
 
-![](E:\博客图片\网络编程\netty9.png)
+![](http://img.shaking.top/netty9.png)
 
 ​	图片来自官网，可以看出包含三大块：
 
@@ -253,13 +253,13 @@ Selector selector = Selector.open();
 3. Dispatcher分配器
 4. Request Handler请求处理器
 
-![](E:\博客图片\网络编程\netty10.png)
+![](http://img.shaking.top/netty10.png)
 
 ## EventLoopGroup初始化过程
 
-![](E:\博客图片\网络编程\netty11.png)
+![](http://img.shaking.top/netty11.png)
 
-![](E:\博客图片\网络编程\netty12.png)
+![](http://img.shaking.top/netty12.png)
 
 ​	**两组EventLoopGroup(Main&Sub)处理不同通道的不同事件**。
 
@@ -267,11 +267,11 @@ Selector selector = Selector.open();
 
 ​	EventLoop自身实现了Executor接口，当调用executor方法提交任务时，则判断是否启动，未启动则调用内置的executor创建新线程来触发run方法执行。
 
-![](E:\博客图片\网络编程\netty13.png)
+![](http://img.shaking.top/netty13.png)
 
 ### Bind绑定端口过程
 
-![](E:\博客图片\网络编程\netty14.png)
+![](http://img.shaking.top/netty14.png)
 
 ### Channel概念
 
@@ -294,7 +294,7 @@ Selector selector = Selector.open();
 
 ​	发起请求和具体处理请求的过程进行解耦：职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可，无需关心请求的处理细节和请求的传递。
 
-![](E:\博客图片\网络编程\netty15.png)
+![](http://img.shaking.top/netty15.png)
 
 ### 实现责任链模式
 
