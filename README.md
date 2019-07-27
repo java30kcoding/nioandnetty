@@ -47,13 +47,13 @@
 
 ### TCP握手机制
 
-![](http://img.shaking.top/net3.png)
+![](http://prvyof0n9.bkt.clouddn.com/net3.png)
 
 ### 用户数据报协议UDP
 
 ​	用户数据报协议UDP是Internet传输层协议。提供无连接、不可靠、数据报尽力传输服务。
 
-![](http://img.shaking.top/net4.png)
+![](http://prvyof0n9.bkt.clouddn.com/net4.png)
 
 ​	使用UDP是应该关注以下几点：
 
@@ -98,7 +98,7 @@
 - `position位置`：写入模式时代表写数据的位置。读取模式时代表读取数据的位置。
 - `limit限制`：写入模式，限制等于buffer的容量。读取模式下，limit等于写入的数据量。
 
-![](http://img.shaking.top/net5.png)
+![](http://prvyof0n9.bkt.clouddn.com/net5.png)
 
 ### ByteBuffer内存类型
 
@@ -128,7 +128,7 @@ ByteBuffer directByteBuffer = ByteBuffer.allocateDirect(noBytes);
 
 ​	BIO应用和NIO应用的区别：
 
-![](http://img.shaking.top/net6.png)
+![](http://prvyof0n9.bkt.clouddn.com/net6.png)
 
 ### SocketChannel
 
@@ -215,13 +215,13 @@ Selector selector = Selector.open();
 
 ## NIO对比BIO
 
-![net7](http://img.shaking.top/net7.png)
+![net7](E:\博客图片\网络编程\net7.png)
 
 ## NIO与多线程结合的改进方案
 
 ​	Doug Lea的著名文章《Scalable IO in Java》
 
-![net8](http://img.shaking.top/net8.png)
+![net8](E:\博客图片\网络编程\net8.png)
 
 ## Netty简介
 
@@ -234,7 +234,7 @@ Selector selector = Selector.open();
 3. ChannelPipeline职责链设计模式：事件处理机制
 4. 内存管理：增强的ByteBuffer缓冲区
 
-![](http://img.shaking.top/netty9.png)
+![](E:\博客图片\网络编程\netty9.png)
 
 ​	图片来自官网，可以看出包含三大块：
 
@@ -253,13 +253,13 @@ Selector selector = Selector.open();
 3. Dispatcher分配器
 4. Request Handler请求处理器
 
-![](http://img.shaking.top/netty10.png)
+![](E:\博客图片\网络编程\netty10.png)
 
 ## EventLoopGroup初始化过程
 
-![](http://img.shaking.top/netty11.png)
+![](E:\博客图片\网络编程\netty11.png)
 
-![](http://img.shaking.top/netty12.png)
+![](E:\博客图片\网络编程\netty12.png)
 
 ​	**两组EventLoopGroup(Main&Sub)处理不同通道的不同事件**。
 
@@ -267,11 +267,11 @@ Selector selector = Selector.open();
 
 ​	EventLoop自身实现了Executor接口，当调用executor方法提交任务时，则判断是否启动，未启动则调用内置的executor创建新线程来触发run方法执行。
 
-![](http://img.shaking.top/netty13.png)
+![](E:\博客图片\网络编程\netty13.png)
 
 ### Bind绑定端口过程
 
-![](http://img.shaking.top/netty14.png)
+![](E:\博客图片\网络编程\netty14.png)
 
 ### Channel概念
 
@@ -294,7 +294,7 @@ Selector selector = Selector.open();
 
 ​	发起请求和具体处理请求的过程进行解耦：职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可，无需关心请求的处理细节和请求的传递。
 
-![](http://img.shaking.top/netty15.png)
+![](E:\博客图片\网络编程\netty15.png)
 
 ### 实现责任链模式
 
@@ -342,11 +342,95 @@ call.process(request);
 
 ​	入站**事件**和出站**操作**会调用pipeline上的处理器。 
 
+### 入站事件和出站事件
 
+- 入站事件：通常指I/O线程生成了入站数据。
 
+  (通俗理解：从socket底层自己往上冒上来的事件都是入站事件)
 
+  比如EventLoop收到selector的OP_READ事件，**入站处理器**调用socketChannel.read(ByteBuffer)接收到数据后，这将导致通道的ChannelPipeline中包含的下一个中的channelRead方法被调用。
 
+- 出站事件：通常是指I/O线程执行实际的输出操作。
 
+  (通俗理解：想主动往socket底层操作的事件都是出站)
+
+  比如bind方法用意是请求server socket绑定到给定的Socket Address，这将导致通道的ChannelPipeline中包含的下一个**出站处理器**中的bind方法被调用。
+
+<center><b>inbound入站事件</b></center>
+
+|             事件              |         描述          |
+| :---------------------------: | :-------------------: |
+|     fireChannelRegistered     |    channel注册事件    |
+|    fireChannelUnregistered    |  channel解除注册事件  |
+|       fireChannelActive       |    channel活跃事件    |
+|      fireExceptionCaught      |       异常事件        |
+|    fireUserEventTriggered     |    用户自定义事件     |
+|        fireChannelRead        |     channel读事件     |
+|    fireChannelReadComplete    |   channel读完成事件   |
+| fireChannelWritabilityChanged | channel写状态变化事件 |
+
+<center><b>outbound出站事件</b></center>
+
+|     事件      |               描述                |
+| :-----------: | :-------------------------------: |
+|     bind      |           端口绑定事件            |
+|    connect    |             连接事件              |
+|  disconnect   |           断开连接事件            |
+|     close     |             关闭事件              |
+|  deregister   |           解除注册事件            |
+|     flush     |        刷新数据到网络事件         |
+|     read      | 读事件，用于注册OP_READ到selector |
+|     write     |              写事件               |
+| writeAndFlush |           写出数据事件            |
+
+### Pipeline中的handler是什么
+
+- `ChannelHandler`：用于处理I/O事件或拦截I/O操作，并转发到ChannelPipeline中的下一个处理器。
+
+  这个顶级接口定义功能很弱，实际使用时会去实现下面两个大的子接口：、
+
+  处理入站I/O事件的**ChannelInboundHandler**、处理出站I/O操作的**ChannelOutboundHandler**
+
+- `适配器类`：为了方便开发，避免所有handler去实现一遍接口方法，Netty提供了简单的实现类：
+
+  **ChannelInboundHandlerAdapter**处理入站I/O事件
+
+  **ChannelOutboundHandlerAdapter**来处理出站I/O事件
+
+  **ChannelDuplexHandler**来支持同事处理入站和出站事件
+
+- `ChannelHandlerContext`：实际存储在Pipeline中的对象并非ChannelHandler，而是上下文对象。
+
+  将handler，包裹在上下文对象中，通过上下文对象与它所属的ChannelPipeline交互，向上或向下传递事件或者修改pipeline都是通过上下文对象。
+
+### 维护Pipeline中的handler
+
+> ChannelPipeline是线程安全的，ChannelHandler可以在任何时候添加或删除。
+>
+> 例如，你可以在即将交换敏感信息时掺入加密处理程序，并在交换后删除它。
+>
+> 一般操作，初始化的时候增加进去，较少删除。下面是Pipeline中管理handler的API
+
+| 方法名称    | 描述                 |
+| ----------- | -------------------- |
+| addFirst    | 最前面插入           |
+| addLast     | 最后面插入           |
+| addBefore   | 插入到指定处理器前面 |
+| addAfter    | 插入到指定处理器后面 |
+| remove      | 移除指定处理器       |
+| removeFirst | 移除第一个处理器     |
+| removeLast  | 移除最后一个处理器   |
+| replace     | 替换指定的处理器     |
+
+```
+//伪代码示例
+ChannelPipeline p = ...;
+p.addLast("1", new InboundHandlerA());
+p.addLast("2", new InboundHandlerB());
+p.addLast("3", new OutboundHandlerA());
+p.addLast("4", new OutboundHandlerB());
+p.addLast("5", new InboundOutboundHandlerX());
+```
 
 
 
