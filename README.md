@@ -432,13 +432,49 @@ p.addLast("4", new OutboundHandlerB());
 p.addLast("5", new InboundOutboundHandlerX());
 ```
 
+### handler的执行分析
+
+![](http://img.shaking.top/netty17.png)
+
+当入站事件发生时，执行顺序是1,2,3,4,5
+
+当出站事件发生时，执行顺序是5,4,3,2,1
+
+在这一原则之上，ChannelPipeline在执行时会进行选择
+
+**3和4位出站处理器**，因此入站事件的实际执行是：1,2,5
+
+**1和2为入站处理器**，因此出站事件的实际执行是：5,4,3
 
 
 
+不同的入站事件会触发handler的不同方法‘:
 
+上下文对象中的fire**方法，代表入站事件传播和处理，其余的方法代表出站事件的传播和处理。
 
+### 分析registered入站事件的处理
 
+![](http://img.shaking.top/netty18.png)
 
+- 创建和初始化Channel
+
+  通道创建时构建一个pipeline，头尾分别是HeadContext......TailContext
+
+  init()增加了一个Channelintializer，这个handler用于初始化通道，我们自己的相关初始化定义都是通过它执行的
+
+- 注册到EventLoop中的Selector上
+
+  config().group().register() registered成功之后
+
+  触发ChannelIntializer.channelRegistered，初始化handler执行一次之后，会把自己从pipeline中删除掉
+
+<center>ServerSocketChannel.pipeline的变化</center>
+
+![](http://img.shaking.top/netty19.png)
+
+### 分析bind出站事件的处理
+
+![](http://img.shaking.top/netty20.png)
 
 
 
